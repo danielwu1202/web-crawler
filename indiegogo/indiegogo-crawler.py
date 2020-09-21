@@ -7,7 +7,13 @@ import pandas as pd
 
 data_path = 'C:/Users/USER/Desktop/論文/'
 indiegogo = pd.read_csv(data_path + 'indiegogo_url_green_tech.csv', engine = 'python')
+headers = ['project_name', 'description', 'num_backer', 'amount', 'percentage', 'location', 'background', 'num_img', 'project_type']
 
+# 一開始先寫入標頭，之後不用再寫入
+with open('indiegogo_project.csv', 'a', newline='', encoding='utf-8') as output_file:
+    dict_writer = csv.DictWriter(output_file, fieldnames=headers)
+    # 寫入標題
+    dict_writer.writeheader()
 
 
 for project_url in indiegogo['project_url']:
@@ -46,12 +52,10 @@ for project_url in indiegogo['project_url']:
         data['project_type'] = project_type[2].text.strip()
         row_list.append(data)
         driver.quit()
-        headers = ['project_name', 'description', 'num_backer', 'amount', 'percentage', 'location', 'background', 'num_img', 'project_type']
 
-# 等所有 for 迴圈資料都放入 row_list 後再寫入檔案，這樣寫入檔案就是最後 for 迴圈都跑完的資料一起寫入
-with open('indiegogo_project.csv', newline='', encoding='utf-8') as output_file:
-    dict_writer = csv.DictWriter(output_file, headers)
-    # 寫入標題
-    dict_writer.writeheader()
-    # 寫入值
-    dict_writer.writerows(row_list)
+    # 每一筆 row 寫入一次
+    with open('indiegogo_project.csv', 'a+', newline='', encoding='utf-8') as output_file:
+        headers = ['project_name', 'description', 'num_backer', 'amount', 'percentage', 'location', 'background', 'num_img', 'project_type']
+        dict_writer = csv.DictWriter(output_file, fieldnames = headers)
+        # 寫入值
+        dict_writer.writerows(row_list)
